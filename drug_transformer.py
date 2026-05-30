@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 from tensorflow.keras import regularizers
-import tensorflow_addons as tfa
+#import tensorflow_addons as tfa
 import keras.backend as K
 from tensorflow.keras import initializers
 from sklearn.metrics import f1_score
