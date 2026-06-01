@@ -689,11 +689,16 @@ prediction_val_4 = midi_simple_concat((drug_atom_one_hot_chunk_val[1200:], gene_
                                          edge_type_matrix_chunk_val[1200:], gene_mutation_bin_chunk_val[1200:],mask_val[1200:]))[:,0]
 
 
-prediction = np.concatenate([prediction_val_1,prediction_val_2,prediction_val_3,prediction_val_4])
+prediction_val = np.concatenate([prediction_val_1,prediction_val_2,prediction_val_3,prediction_val_4])
 
 
 
 acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
+
+np.save('BIB_revision/midi_simple_concat.npy', prediction_val)
+np.save('BIB_revision/input_drug_response_val.npy', np.array(input_drug_response_val))
+
+
 
 
 
