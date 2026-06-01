@@ -50,6 +50,30 @@ if gpus:
 
 prior_knowledge_drug_gene = pd.read_table('canonical_smiles.Tingyi_gene.pccompound.gene_id.interaction_score.txt',sep="\t",on_bad_lines='skip',header=None)
 
+P = np.zeros((1, 100, 60))
+XX = np.arange(100, dtype=np.float32).reshape(
+    -1,1)/np.power(1000, np.arange(
+        0, 60, 2, dtype=np.float32) / 60)
+P[:, :, 0::2] = np.sin(XX)
+P[:, :, 1::2] = np.cos(XX)
+#P[0][0] = np.zeros((60))
+#shape_X = tf.shape(X)
+#X = tf.math.l2_normalize(X, axis=-1)
+P = tf.cast(tf.math.l2_normalize(P[:, :100,:], axis=-1), 
+    dtype=tf.float32)
+edge_type_dict = np.zeros((5,5))
+gene_expression_bin_dict = np.zeros((4,4))
+gene_mutation_dict = np.zeros((2,2))
+for i in range(5):
+    edge_type_dict[i,i] = 1
+edge_type_dict = tf.cast(edge_type_dict,dtype=tf.float32)
+for i in range(4):
+    gene_expression_bin_dict[i,i] = 1
+gene_expression_bin_dict = tf.cast(gene_expression_bin_dict,dtype=tf.float32)
+for i in range(2):
+    gene_mutation_dict[i,i] = 1
+gene_mutation_dict = tf.cast(gene_mutation_dict, dtype=tf.float32)
+
 def filtering_raw_gene_expression(gene_expression: pd.DataFrame)->pd.DataFrame:
     """
     Compute the variance of each gene expression, and also return 
