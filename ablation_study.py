@@ -670,6 +670,8 @@ midi_simple_concat = k.midi_simple_concat()
 
 midi_simple_concat.summary()
 
+midi_simple_concat.load_weights('midi_simple_concat.weights.h5')
+
 prediction_val_1 = midi_simple_concat((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
                                          drug_smile_length_chunk_val[0:400], drug_rel_position_chunk_val[0:400], 
                                          edge_type_matrix_chunk_val[0:400], gene_mutation_bin_chunk_val[0:400],mask_val[0:400]))[:,0]
@@ -685,6 +687,17 @@ prediction_val_3 = midi_simple_concat((drug_atom_one_hot_chunk_val[800:1200], ge
 prediction_val_4 = midi_simple_concat((drug_atom_one_hot_chunk_val[1200:], gene_expression_chunk_val[1200:], 
                                          drug_smile_length_chunk_val[1200:], drug_rel_position_chunk_val[1200:], 
                                          edge_type_matrix_chunk_val[1200:], gene_mutation_bin_chunk_val[1200:],mask_val[1200:]))[:,0]
+
+
+prediction = np.concatenate([prediction_val_1,prediction_val_2,prediction_val_3,prediction_val_4])
+
+
+
+acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
+
+
+
+
 
 
 
