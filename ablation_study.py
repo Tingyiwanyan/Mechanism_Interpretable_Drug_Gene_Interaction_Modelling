@@ -571,6 +571,133 @@ class drug_transformer_():
                                                   kernel_regularizer=regularizers.L2(1e-4),
                                                   bias_initializer=initializers.Zeros())
 
+    def model_construction_midi(self, if_mutation=None):
+        """
+        construct the transformer model
+        """
+        X_input = Input((100, 8))
+        Y_input = Input((6144, 1))
+        gene_mutation_input = Input((6144, 2))
+        rel_position_embedding = Input((100,100,60))
+        edge_type_embedding = Input((100,100,5))
+        #rel_position_embedding_origin = Input((80,80,60))
+        enc_valid_lens_ = Input(())
+        mask_input = Input((100,1))
+
+        shape_input = tf.shape(X_input)
+        gene_embedding = self.input_gene_embeddings
+        gene_embedding = tf.expand_dims(gene_embedding, axis=0)
+        gene_embedding = tf.broadcast_to(gene_embedding, [shape_input[0], gene_embedding.shape[1], gene_embedding.shape[-1]])
+
+        gene_embedding = tf.math.l2_normalize(self.dense_3(gene_embedding),axis=-1)
+        #gene_embedding = self.dense_3(gene_embedding)
+
+        #rel_position_embedding_ = tf.math.l2_normalize(self.dense_13(rel_position_embedding), axis = -1)
+        edge_type_embedding_ = tf.math.l2_normalize(self.dense_8(edge_type_embedding),axis=-1)
+
+        X = self.dense_0(X_input)
+        #X = self.pos_encoding(X)
+        X, att, score = self.encoder_1(X, enc_valid_lens=enc_valid_lens_, 
+                                #relative_pos_enc=self.relative_pos_enc_lookup,
+                                relative_pos_enc=rel_position_embedding,
+                                edge_type_enc = edge_type_embedding_,
+                                #relative_pos_origin_ = rel_position_embedding_origin,
+                                if_sparse_max=False)
+
+        X, att, score = self.encoder_2(X, enc_valid_lens=enc_valid_lens_, 
+                                #relative_pos_enc=self.relative_pos_enc_lookup,
+                                relative_pos_enc=rel_position_embedding,
+                                edge_type_enc = edge_type_embedding_,
+                                #relative_pos_origin_ = rel_position_embedding_origin,
+                                if_sparse_max=False)
+        #X_enc_2, att = self.encoder_2(X, enc_valid_lens=enc_valid_lens_,
+                                     #relative_pos_enc=self.relative_pos_enc_lookup)
+        #X_enc_3, att = self.encoder_3(X, enc_valid_lens=enc_valid_lens_)
+        #X = tf.concat([X_enc_1, X_enc_2],axis=-1)
+
+        X = self.dense_1(X)
+
+        shape_x = tf.shape(X)
+        #mask = tf.expand_dims(mask_input, axis=-1)
+        mask = tf.cast(tf.broadcast_to(mask_input, shape=shape_x),tf.float32)
+        X = tf.multiply(mask,X)
+
+        
+        X_global = self.flattern_global(X)
+        #X_global = tf.reduce_sum(X, axis=1)
+        #X_global = tf.math.divide(X_global, tf.expand_dims(enc_valid_lens_,axis=-1))
+        X_global = tf.expand_dims(X_global, axis=1)
+        X_global = self.dense_9(X_global)
+
+        """
+        self-attention for the decoder
+        """
+        Y = tf.math.l2_normalize(self.dense_2(Y_input),axis=-1)
+        #Y = self.dense_2(Y_input)
+        #Y = tf.math.l2_normalize(tf.concat([gene_embedding, Y],axis=-1),axis=-1)
+        #Y = self.r_connection_gene_emb(Y, gene_embedding)
+        Y = tf.math.add(Y, gene_embedding)
+        #Y = tf.concat([Y,gene_embedding], axis=-1)
+
+        if not if_mutation == None:
+            Y_gene_mutate = tf.math.l2_normalize(self.dense_14(gene_mutation_input),axis=-1)
+            #Y = tf.math.l2_normalize(tf.concat([Y, Y_gene_mutate],axis=-1),axis=-1)
+            #Y = self.r_connection_gene_mutate(Y, Y_gene_mutate)
+            Y = tf.math.add(Y, Y_gene_mutate)
+            #Y = tf.concat([Y, Y_gene_mutate], axis=-1)
+        #Y = self.pos_encoding_gene(Y)
+
+        Y = self.dense_16(Y)
+
+        """
+        cross attention for the decoder
+        """
+
+        X_global, att_score_global1, Y_value, score_cross = self.decoder_global_1(X_global, gene_embedding, if_sparse_max=False)#, if_select_feature_=None)
+        X_global_, att_score_global2, Y_key, score_cross_global = self.decoder_global_2(X_global, Y_value, if_sparse_max=False, if_select_feature_=True)
+        #X_global3, att_score_global3, Y_key3 = self.decoder_global_3(X_global, Y, if_sparse_max=True, if_select_feature_=True)
+
+        #X_global1, att_score_global1 = self.decoder_global_1(X_global, Y, if_sparse_max=True)
+        #X_global2, att_score_global2 = self.decoder_global_2(X_global, Y, if_sparse_max=True)
+        #X_global3, att_score_global3 = self.decoder_global_3(X_global, Y, if_sparse_max=True)
+
+        #Y = tf.concat([Y,Y_key], axis=-1)
+        #Y = self.dense_16(Y)
+
+        #X_global = X_global1
+        #att_score_global1 = tf.transpose(att_score_global1, perm=[0,2,1])
+        att_score_global2 = tf.transpose(att_score_global2, perm=[0,2,1])
+        #att_score_global3 = tf.transpose(att_score_global3, perm=[0,2,1])
+
+        #X_global_att = tf.broadcast_to(X_global, shape=[shape_input[0], Y_key.shape[1], Y_key.shape[-1]])
+        #Y_key = tf.math.multiply(att_score_global2, Y_key)s
+        #Y_key = tf.math.add(X_global_att, Y_key)
+
+        #X_global, att_score_global2, Y_key = self.decoder_global_2(X_global, Y, if_sparse_max=False, if_select_feature_=True)
+        #Y = self.dense_6(Y)
+        #Y_key2 = self.dense_6(Y_key2)
+        #Y_key3 = self.dense_6(Y_key3)
+        #att_score_global2 = tf.transpose(att_score_global2, perm=[0,2,1])
+        Y_global = tf.math.multiply(att_score_global2, Y)
+
+        Y = Y_global
+        X_global = self.flattern_global_(X_global_)
+        #X_global = tf.math.l2_normalize(X_global, axis=-1)
+        X_global = self.dense_17(X_global)
+        Y = self.flattern_deco(Y)
+        Y = tf.math.l2_normalize(Y, axis=-1)
+        Y = self.dense_18(Y)
+        #Y = tf.math.l2_normalize(Y, axis=-1)
+        #Y = tf.concat([X_global, Y], axis=-1)   
+        Y = self.dense_5(Y)
+        Y_predict = tf.math.add(Y, X_global)
+
+
+        self.model = Model(inputs=(X_input, Y_input, enc_valid_lens_, rel_position_embedding, edge_type_embedding, gene_mutation_input, mask_input), \
+            outputs=[Y_predict, score_cross_global, X_global, Y, gene_embedding, X_global_, att_score_global2, Y_global])
+        #self.model.compile(loss= "mean_squared_error" , optimizer="adam", metrics=["mean_squared_error"])
+
+        return self.model
         
     def midi_simple_concat(self, if_mutation=None):
         """
@@ -666,25 +793,29 @@ class drug_transformer_():
         return self.model
 
 k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
-midi_simple_concat = k.midi_simple_concat()
+#midi_simple_concat = k.midi_simple_concat()
 
-midi_simple_concat.summary()
+midi_model_no_supervised_contrast = k.model_construction_midi()
 
-midi_simple_concat.load_weights('midi_simple_concat.weights.h5')
+midi_model_no_supervised_contrast.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_supervise_contrast.weights.h5')
 
-prediction_val_1 = midi_simple_concat((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
+#midi_simple_concat.summary()
+
+#midi_simple_concat.load_weights('midi_simple_concat.weights.h5')
+
+prediction_val_1 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
                                          drug_smile_length_chunk_val[0:400], drug_rel_position_chunk_val[0:400], 
                                          edge_type_matrix_chunk_val[0:400], gene_mutation_bin_chunk_val[0:400],mask_val[0:400]))[:,0]
 
-prediction_val_2 = midi_simple_concat((drug_atom_one_hot_chunk_val[400:800], gene_expression_chunk_val[400:800], 
+prediction_val_2 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[400:800], gene_expression_chunk_val[400:800], 
                                          drug_smile_length_chunk_val[400:800], drug_rel_position_chunk_val[400:800], 
                                          edge_type_matrix_chunk_val[400:800], gene_mutation_bin_chunk_val[400:800],mask_val[400:800]))[:,0]
 
-prediction_val_3 = midi_simple_concat((drug_atom_one_hot_chunk_val[800:1200], gene_expression_chunk_val[800:1200], 
+prediction_val_3 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[800:1200], gene_expression_chunk_val[800:1200], 
                                          drug_smile_length_chunk_val[800:1200], drug_rel_position_chunk_val[800:1200], 
                                          edge_type_matrix_chunk_val[800:1200], gene_mutation_bin_chunk_val[800:1200],mask_val[800:1200]))[:,0]
 
-prediction_val_4 = midi_simple_concat((drug_atom_one_hot_chunk_val[1200:], gene_expression_chunk_val[1200:], 
+prediction_val_4 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[1200:], gene_expression_chunk_val[1200:], 
                                          drug_smile_length_chunk_val[1200:], drug_rel_position_chunk_val[1200:], 
                                          edge_type_matrix_chunk_val[1200:], gene_mutation_bin_chunk_val[1200:],mask_val[1200:]))[:,0]
 
@@ -695,8 +826,10 @@ prediction_val = np.concatenate([prediction_val_1,prediction_val_2,prediction_va
 
 acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
 
-np.save('BIB_revision/midi_simple_concat.npy', prediction_val)
-np.save('BIB_revision/input_drug_response_val.npy', np.array(input_drug_response_val))
+#np.save('BIB_revision/midi_simple_concat.npy', prediction_val)
+#np.save('BIB_revision/input_drug_response_val.npy', np.array(input_drug_response_val))
+
+np.save('BIB_revision/midi_no_supervise_contrast.npy', prediction_val)
 
 
 
