@@ -837,7 +837,7 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 #clf= RandomForestRegressor(max_depth=2, random_state=0)
 #check_gene_pathway()
 #check_each_drug_prediction()
-for epoch in range(3):
+for epoch in range(10):
     print("training in epoch")
     print(epoch)
 
@@ -896,10 +896,10 @@ for epoch in range(3):
     
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.6*loss_drug-0.2*loss_gene_set-0.4*loss_gene_embedding
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
-            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-0.2*loss_drug
+            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])
             #loss_total = loss_total/len(drug_name_batch)
-            
+            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast
     
         gradients = tape.gradient(loss,model_midi.trainable_variables)
         #optimizer = tf.keras.optimizers.SGD(learning_rate=lr_schedule,momentum=0.9)
