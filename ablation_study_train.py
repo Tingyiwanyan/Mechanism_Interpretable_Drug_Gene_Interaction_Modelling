@@ -842,7 +842,7 @@ for epoch in range(3):
     print(epoch)
 
     for step, (batch_drug_name, batch_smile_seq, 
-               batch_interpret_smile, batch_cell_line_name, batch_drug_response, batch_gene_prior)in enumerate(zip(train_data)):
+               batch_interpret_smile, batch_cell_line_name, batch_drug_response, batch_gene_prior)in enumerate(train_data):
         #print(batch_drug_respons)
         decode_batch_cell_line_name = [x.decode('utf-8') for x in list(np.array(batch_cell_line_name))]
         decode_batch_drug_name = [x.decode('utf-8') for x in list(np.array(batch_drug_name))]
