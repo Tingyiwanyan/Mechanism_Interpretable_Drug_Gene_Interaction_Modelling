@@ -733,4 +733,4 @@ acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
 #np.save('BIB_revision/midi_simple_concat.npy', prediction_val)
 #np.save('BIB_revision/input_drug_response_val.npy', np.array(input_drug_response_val))
 
-np.save('BIB_revision/midi_no_supervise_contrast.npy', prediction_val)
+#np.save('BIB_revision/midi_no_supervise_contrast.npy', prediction_val)
