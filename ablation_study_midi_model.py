@@ -690,29 +690,36 @@ class drug_transformer_():
         return self.model
 
 k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
-midi_model_no_supervised_contrast = k.model_construction_midi(if_mutation=True)
-midi_model_no_supervised_contrast.summary()
+#midi_model_no_supervised_contrast = k.model_construction_midi(if_mutation=True)
+#midi_model_no_supervised_contrast.summary()
 
 
-midi_model_no_supervised_contrast.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_supervise_contrast.weights.h5')
+#midi_model_no_supervised_contrast.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_supervise_contrast.weights.h5')
+
+
+midi_model_no_self_supervised_contrast = k.model_construction_midi(if_mutation=True)
+midi_model_no_self_supervised_contrast.summary()
+
+
+midi_model_no_self_supervised_contrast.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_self_supervised.weights.h5')
 
 #midi_simple_concat.summary()
 
 #midi_simple_concat.load_weights('midi_simple_concat.weights.h5')
 
-prediction_val_1 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
+prediction_val_1 = midi_model_no_self_supervised_contrast((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
                                          drug_smile_length_chunk_val[0:400], drug_rel_position_chunk_val[0:400], 
                                          edge_type_matrix_chunk_val[0:400], gene_mutation_bin_chunk_val[0:400],mask_val[0:400]))[0][:,0]
 
-prediction_val_2 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[400:800], gene_expression_chunk_val[400:800], 
+prediction_val_2 = midi_model_no_self_supervised_contrast((drug_atom_one_hot_chunk_val[400:800], gene_expression_chunk_val[400:800], 
                                          drug_smile_length_chunk_val[400:800], drug_rel_position_chunk_val[400:800], 
                                          edge_type_matrix_chunk_val[400:800], gene_mutation_bin_chunk_val[400:800],mask_val[400:800]))[0][:,0]
 
-prediction_val_3 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[800:1200], gene_expression_chunk_val[800:1200], 
+prediction_val_3 = midi_model_no_self_supervised_contrast((drug_atom_one_hot_chunk_val[800:1200], gene_expression_chunk_val[800:1200], 
                                          drug_smile_length_chunk_val[800:1200], drug_rel_position_chunk_val[800:1200], 
                                          edge_type_matrix_chunk_val[800:1200], gene_mutation_bin_chunk_val[800:1200],mask_val[800:1200]))[0][:,0]
 
-prediction_val_4 = midi_model_no_supervised_contrast((drug_atom_one_hot_chunk_val[1200:], gene_expression_chunk_val[1200:], 
+prediction_val_4 = midi_model_no_self_supervised_contrast((drug_atom_one_hot_chunk_val[1200:], gene_expression_chunk_val[1200:], 
                                          drug_smile_length_chunk_val[1200:], drug_rel_position_chunk_val[1200:], 
                                          edge_type_matrix_chunk_val[1200:], gene_mutation_bin_chunk_val[1200:],mask_val[1200:]))[0][:,0]
 
