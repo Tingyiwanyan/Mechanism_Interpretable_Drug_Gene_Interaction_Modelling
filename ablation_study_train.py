@@ -856,11 +856,6 @@ for epoch in range(3):
         extract_input_data_midi(batch_drug_name, decode_batch_smile_seq, \
                                 decode_batch_interpret_smile, decode_batch_cell_line_name, batch_drug_response, batch_gene_prior)
     
-        drug_atom_one_hot_chunk_prior_convert, drug_rel_position_chunk_prior_convert, edge_type_matrix_chunk_prior_convert, \
-        drug_smile_length_chunk_prior_convert, gene_prior_chunk_convert = \
-        extract_input_data_midi_prior(decode_batch_smile_seq_convert_prior, \
-                                      decode_batch_interpret_smile_convert_prior, \
-                                      batch_gene_prior_convert)
     
         shape_batch_prior = drug_atom_one_hot_chunk_prior_convert.shape[0]
         gene_expression_bin_chunk_prior = tf.convert_to_tensor(np.zeros((shape_batch_prior, 6144)), tf.float32)
@@ -886,13 +881,6 @@ for epoch in range(3):
                         edge_type_matrix_chunk, gene_mutation_bin_chunk, mask))
             #prediction = model_midi((drug_atom_one_hot_chunk, gene_expression_bin_chunk,drug_smile_length_chunk))
     
-            prediction_prior, score_cross_global_prior, X_global_prior, \
-            Y_gene_prior, Y_gene_embedding_prior,  \
-            X_global_prior_, att_score_global2_prior, Y_global_prior = \
-            model_midi((drug_atom_one_hot_chunk_prior_convert, gene_expression_bin_chunk_prior, \
-                        drug_smile_length_chunk_prior_convert, \
-                        drug_rel_position_chunk_prior_convert, edge_type_matrix_chunk_prior_convert, \
-                        gene_mutation_bin_chunk_prior, mask_prior))
     
             
             #print(score_cross_global[:,0,:])
