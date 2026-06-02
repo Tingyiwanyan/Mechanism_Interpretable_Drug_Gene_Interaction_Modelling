@@ -856,10 +856,6 @@ for epoch in range(3):
         extract_input_data_midi(batch_drug_name, decode_batch_smile_seq, \
                                 decode_batch_interpret_smile, decode_batch_cell_line_name, batch_drug_response, batch_gene_prior)
     
-    
-        shape_batch_prior = drug_atom_one_hot_chunk_prior_convert.shape[0]
-        gene_expression_bin_chunk_prior = tf.convert_to_tensor(np.zeros((shape_batch_prior, 6144)), tf.float32)
-        gene_mutation_bin_chunk_prior = tf.convert_to_tensor(np.zeros((shape_batch_prior, 6144, 2)), tf.float32)
         
         
         batch_shape = drug_atom_one_hot_chunk.shape[0]
