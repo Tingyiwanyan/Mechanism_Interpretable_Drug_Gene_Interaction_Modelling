@@ -911,7 +911,8 @@ for epoch in range(3):
             loss_drug = tf.reduce_mean(tf.math.log(tf.math.divide(X_global_score_nominator,X_global_score_denominator)),axis=-1)
     
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.6*loss_drug-0.2*loss_gene_set-0.4*loss_gene_embedding
-            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_contrast_prior-0.2*loss_drug
+            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
+            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])
             #loss_total = loss_total/len(drug_name_batch)
             
