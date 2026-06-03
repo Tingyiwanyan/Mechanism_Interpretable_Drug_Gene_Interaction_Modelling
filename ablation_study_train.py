@@ -372,10 +372,7 @@ class drug_transformer_():
                                 edge_type_enc = edge_type_embedding_,
                                 #relative_pos_origin_ = rel_position_embedding_origin,
                                 if_sparse_max=False)
-        #X_enc_2, att = self.encoder_2(X, enc_valid_lens=enc_valid_lens_,
-                                     #relative_pos_enc=self.relative_pos_enc_lookup)
-        #X_enc_3, att = self.encoder_3(X, enc_valid_lens=enc_valid_lens_)
-        #X = tf.concat([X_enc_1, X_enc_2],axis=-1)
+
 
         X = self.dense_1(X)
 
@@ -462,6 +459,7 @@ class drug_transformer_():
         return self.model
 
 
+"""
 gene_expression_whole_avail = gene_expression.loc[cell_line_name_avail]
 disc_gene_total = []
 continuous_gene_total = []
@@ -692,9 +690,9 @@ train_data = tf.data.Dataset.from_tensor_slices((np.array(input_drug_name), np.a
 train_data = train_data.shuffle(buffer_size=1024, seed=4).batch(batch_size)
 steps = np.array(input_drug_name).shape[0]//batch_size
 
-"""
-Create validation input set
-"""
+
+#Create validation input set
+
 smile_length = 100
 rel_distance_batch_val = [generate_rel_dist_matrix(x) for x in input_smile_seq_val]
 drug_rel_position_chunk_val = []
@@ -760,9 +758,7 @@ mask_val = tf.reshape(mask_val, shape=(batch_shape_val,100))
 mask_val = tf.expand_dims(mask_val, axis=-1)
 
 def extract_input_data_midi(batch_drug_name, batch_smile_seq, batch_interpret_smile, batch_cell_line_name, batch_drug_response, batch_gene_prior=None):
-    """
-    Return the actual input data for midi model
-    """
+    
     rel_distance_batch = [generate_rel_dist_matrix(x) for x in batch_smile_seq]
     drug_rel_position_chunk = []
     drug_smile_length_chunk = []
@@ -832,11 +828,6 @@ model_midi.summary()
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 
-#optimizer = tf.keras.optimizers.SGD(learning_rate=lr_schedule,momentum=0.9)
-#clf = Ridge(alpha=1.0)
-#clf= RandomForestRegressor(max_depth=2, random_state=0)
-#check_gene_pathway()
-#check_each_drug_prediction()
 for epoch in range(10):
     print("training in epoch")
     print(epoch)
@@ -924,7 +915,7 @@ for epoch in range(10):
             acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
             #accs.append(acc)
             print("correlation is: %f" %acc)
-
+"""
 
 
 
