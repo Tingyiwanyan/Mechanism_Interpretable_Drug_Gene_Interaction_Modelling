@@ -156,10 +156,16 @@ for i in pathway_names:
     pathway_gene_set = list(pathway_gene.loc[i][1])
     gene_set[i] = pathway_gene_set
 
-with open('gene_embedding_important.npy', 'rb') as f:
-    gene_embeddings = np.load(f)
+#with open('gene_embedding_important.npy', 'rb') as f:
+    #gene_embeddings = np.load(f)
 
 gene_name_avail_geneformer = list(np.load('gene_names.npy'))
+
+df_gene_embedding_one_hot = pd.DataFrame({'numbers': range(6144)})
+encoder_gene_embedding = BinaryEncoder(cols=['numbers'])
+df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embedding_one_hot)
+
+gene_embeddings = np.array(df_binary_gene_embedding)
 
 class drug_transformer_():
     """
@@ -459,7 +465,7 @@ class drug_transformer_():
         return self.model
 
 
-"""
+
 gene_expression_whole_avail = gene_expression.loc[cell_line_name_avail]
 disc_gene_total = []
 continuous_gene_total = []
@@ -758,7 +764,7 @@ mask_val = tf.reshape(mask_val, shape=(batch_shape_val,100))
 mask_val = tf.expand_dims(mask_val, axis=-1)
 
 def extract_input_data_midi(batch_drug_name, batch_smile_seq, batch_interpret_smile, batch_cell_line_name, batch_drug_response, batch_gene_prior=None):
-    
+
     rel_distance_batch = [generate_rel_dist_matrix(x) for x in batch_smile_seq]
     drug_rel_position_chunk = []
     drug_smile_length_chunk = []
@@ -886,11 +892,11 @@ for epoch in range(10):
             loss_drug = tf.reduce_mean(tf.math.log(tf.math.divide(X_global_score_nominator,X_global_score_denominator)),axis=-1)
     
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.6*loss_drug-0.2*loss_gene_set-0.4*loss_gene_embedding
-            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
+            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])
             #loss_total = loss_total/len(drug_name_batch)
-            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast
+            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast
     
         gradients = tape.gradient(loss,model_midi.trainable_variables)
         #optimizer = tf.keras.optimizers.SGD(learning_rate=lr_schedule,momentum=0.9)
@@ -915,7 +921,7 @@ for epoch in range(10):
             acc = scipy.stats.pearsonr(np.array(input_drug_response_val),prediction_val)[0]
             #accs.append(acc)
             print("correlation is: %f" %acc)
-"""
+
 
 
 
