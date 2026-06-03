@@ -28,6 +28,7 @@ import selfies as sf
 import numpy as np
 import Geneformer as ge
 import gseapy as gp
+from category_encoders import BinaryEncoder
 #from geneformer.pretrainer import token_dictionary
 
 ensemble_id = pyreadr.read_r('/project/DPDS/Xiao_lab/shared/lcai/Ling-Tingyi/LCCL_input/RNA-CCLE_RNAseq.annot.rds')[None]
