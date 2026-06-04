@@ -275,6 +275,13 @@ continuous_gene_df = pd.DataFrame(continuous_gene_total, index=test_cell_line_na
 continuous_gene_df.columns = list(gene_expression.columns)
 continuous_gene_df_filter = continuous_gene_df[gene_name_avail_geneformer]
 
+avail_mutation_list = continuous_gene_df_filter.columns.intersection(mutation_avail_filter.columns)
+mutation_avail_filter = mutation_avail_filter[avail_mutation_list]
+mutation_whole = np.zeros(np.array(continuous_gene_df_filter).shape)
+mutation_whole = pd.DataFrame(mutation_whole, index=test_cell_line_name)
+mutation_whole.columns = list(continuous_gene_df_filter.columns)
+mutation_whole[mutation_avail_filter.columns] = mutation_avail_filter
+
 
 smile_length = 100
 rel_distance_batch_val = [generate_rel_dist_matrix(x) for x in input_smile_seq_val]
