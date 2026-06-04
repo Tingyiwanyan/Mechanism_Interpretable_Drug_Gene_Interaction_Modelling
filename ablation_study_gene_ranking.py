@@ -169,6 +169,7 @@ df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embeddin
 
 gene_embeddings = np.array(df_binary_gene_embedding)
 
+k = drug_transformer_(gene_embeddings)
 midi_model_binary_gene_embedding = k.model_construction_midi(if_mutation=True)
 midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
 
@@ -223,8 +224,8 @@ for i in GDSC_validate_drugs:
         continue
 
 
-k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
-model_midi = k.model_construction_midi(if_mutation=True)
+#k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
+#model_midi = k.model_construction_midi(if_mutation=True)
 
 df_data = pd.read_csv('df_sample_drug_response_data.csv')
 drug_names = list(df_data['drug_name'])
