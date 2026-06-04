@@ -162,5 +162,11 @@ with open('gene_embedding_important.npy', 'rb') as f:
     gene_embeddings = np.load(f)
 
 
-
+GDSC_validate_drugs = ['PF-562271','QUIZARTINIB','FORETINIB','DABRAFENIB','SELUMETINIB','MASITINIB','FR-180204',
+                       'GEFITINIB','AXITINIB','PALBOCICLIB','AFATINIB','JW-7-24-1','OSIMERTINIB','DASATINIB','BOSUTINIB',
+                       'KU-55933','PONATINIB','CCT007093','WZ4003','TAMOXIFEN','IBRUTINIB','AZD3759','QL-XI-92','LESTAURTINIB',
+                       'AZD6738','CAMPTOTHECIN','PRT062607','OSIMERTINIB','IPA-3','AFATINIB','VE-822','PFI-1','PAZOPANIB','QL-X-138',
+                       'OSI-930','VISMODEGIB','AMUVATINIB','AZD4547','GW-2580','LFM-A13','MIRA-1','CP466722','SAVOLITINIB',
+                       'SN-38','GSK690693','RUXOLITINIB','ALECTINIB','PELITINIB','AZ960','AST-1306','SERDEMETAN','PHA-665752','sulfatinib',
+                      'NINTEDANIB','AZD4547']
 
