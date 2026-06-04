@@ -312,8 +312,8 @@ for i in range(len(batch_drug_names)):
             y_index = np.where(top_gene_names==ii)[0][0]
         except:
             continue
-        if y_index > 5500:
-            continue
+        i#f y_index > 5500:
+            #continue
         print(y_index)
         TTD_gene_ranking_list.append(y_index)
         TTD_drug_gene_index.append(index__)
