@@ -169,6 +169,11 @@ df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embeddin
 
 gene_embeddings = np.array(df_binary_gene_embedding)
 
+midi_model_binary_gene_embedding = k.model_construction_midi(if_mutation=True)
+midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
+
+
+
 GDSC_validate_drugs = ['PF-562271','QUIZARTINIB','FORETINIB','DABRAFENIB','SELUMETINIB','MASITINIB','FR-180204',
                        'GEFITINIB','AXITINIB','PALBOCICLIB','AFATINIB','JW-7-24-1','OSIMERTINIB','DASATINIB','BOSUTINIB',
                        'KU-55933','PONATINIB','CCT007093','WZ4003','TAMOXIFEN','IBRUTINIB','AZD3759','QL-XI-92','LESTAURTINIB',
@@ -201,7 +206,7 @@ TTD_validate_drugs = ['Intedanib','Ruxolitinib','Baricitinib','Estrone','Ospemif
 TTD_validate_drugs = list(np.unique(TTD_validate_drugs))
 
 
-df_valid_drug_smile_TTD = pd.read_csv('valid_drug_smile_TTD.csv')
+df_TTD_drug_smile = pd.read_csv('df_TTD_drug_smile.csv')
 
 drug_smile_list_GDSC = []
 drug_name_list_GDSC = []
@@ -216,4 +221,69 @@ for i in GDSC_validate_drugs:
         print(i)
     except:
         continue
+
+
+k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
+model_midi = k.model_construction_midi(if_mutation=True)
+
+df_data = pd.read_csv('df_sample_drug_response_data.csv')
+drug_names = list(df_data['drug_name'])
+
+continuous_gene_exp = pd.read_csv('continuous_gene_exp.csv')
+continuous_gene_exp.rename(columns = {continuous_gene_exp.columns[0]:'cell_line_name'}, inplace=True)
+continuous_gene_exp.set_index('cell_line_name', inplace=True)
+
+
+mutation_gene = pd.read_csv('mutation_gene.csv')
+mutation_gene.rename(columns = {mutation_gene.columns[0]:'cell_line_name'}, inplace=True)
+mutation_gene.set_index('cell_line_name', inplace=True)
+mutation_gene
+
+df_TTD_drug_smile.set_index('Drug_name_TTD',inplace=True)
+
+TTD_validate_smiles = df_TTD_drug_smile.loc[TTD_validate_drugs]['Drug_smile_TTD']
+
+whole_targeted_gene_names = list(merged_df_TTD.loc[TTD_validate_drugs]['Target_Gene_Name'])
+
+from utils.utils import *
+from utils.smile_rel_dist_interpreter import *
+#batch_drug_names = valid_drug_TTD_[300:400]
+#batch_smile_seq = valid_drug_smile_TTD_[300:400]
+batch_drug_names = TTD_validate_drugs
+batch_smile_seq = TTD_validate_smiles
+batch_cell_line_name = list(df_data['cell_line_name'])[0:100] + list(df_data['cell_line_name'])[0:50]
+batch_drug_response = list(df_data['drug_response'])[0:100] + list(df_data['drug_response'])[0:50]
+drug_atom_one_hot_chunk, drug_rel_position_chunk, edge_type_matrix_chunk,\
+drug_smile_length_chunk, gene_expression_bin_chunk, gene_mutation_bin_chunk, gene_prior_chunk = \
+extract_input_data_midi(batch_drug_names, batch_smile_seq, \
+                        batch_cell_line_name, batch_drug_response, continuous_gene_exp, mutation_gene)
+
+
+batch_shape = drug_atom_one_hot_chunk.shape[0]
+mask = tf.range(start=0, limit=100, dtype=tf.float32)
+mask = tf.broadcast_to(tf.expand_dims(mask,axis=0),shape=[batch_shape,100])
+mask = tf.reshape(mask, shape=(batch_shape*100))
+mask = mask < tf.cast(tf.repeat(drug_smile_length_chunk,repeats=100),tf.float32)
+mask = tf.where(mask,1,0)
+mask = tf.reshape(mask, shape=(batch_shape,100))
+mask = tf.expand_dims(mask, axis=-1)
+
+
+
+
+feature_select_score_model_drug = att_score_self_enco(midi_model_binary_gene_embedding,7)
+feature_select_score_model_gene = att_score_self_enco(midi_model_binary_gene_embedding,31)
+
+feature_select_score_drug = feature_select_score_model_drug.predict((drug_atom_one_hot_chunk, gene_expression_bin_chunk, \
+                                                                    drug_smile_length_chunk, drug_rel_position_chunk, \
+                                                                    edge_type_matrix_chunk, gene_mutation_bin_chunk, mask))[1]
+feature_select_score_gene = feature_select_score_model_gene.predict((drug_atom_one_hot_chunk, gene_expression_bin_chunk, \
+                                                                    drug_smile_length_chunk, drug_rel_position_chunk, \
+                                                                    edge_type_matrix_chunk, gene_mutation_bin_chunk, mask))[1][:,0,:]
+
+
+
+
+
+
 
