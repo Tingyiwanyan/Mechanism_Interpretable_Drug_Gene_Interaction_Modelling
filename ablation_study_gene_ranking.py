@@ -158,20 +158,20 @@ for i in pathway_names:
     gene_set[i] = pathway_gene_set
 
 
-with open('gene_embedding_important.npy', 'rb') as f:
-    gene_embeddings = np.load(f)
+#with open('gene_embedding_important.npy', 'rb') as f:
+    #gene_embeddings = np.load(f)
 
 gene_name_avail_geneformer = list(np.load('gene_names.npy'))
 
-#df_gene_embedding_one_hot = pd.DataFrame({'numbers': range(6144)})
-#encoder_gene_embedding = BinaryEncoder(cols=['numbers'])
-#df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embedding_one_hot)
+df_gene_embedding_one_hot = pd.DataFrame({'numbers': range(6144)})
+encoder_gene_embedding = BinaryEncoder(cols=['numbers'])
+df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embedding_one_hot)
 
-#gene_embeddings = np.array(df_binary_gene_embedding)
+gene_embeddings = np.array(df_binary_gene_embedding)
 
 k = drug_transformer_(gene_embeddings)
 midi_model_binary_gene_embedding = k.model_construction_midi(if_mutation=True)
-midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_self_supervised.weights.h5')
+midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
 
 
 
