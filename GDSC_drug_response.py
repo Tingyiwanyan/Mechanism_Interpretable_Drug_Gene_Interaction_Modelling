@@ -261,6 +261,7 @@ string_lookup = tf.keras.layers.StringLookup(vocabulary=vocabulary_drug)
 layer_one_hot = tf.keras.layers.CategoryEncoding(num_tokens=8, output_mode="one_hot")
 
 
+continuous_gene_total = []
 for name in test_cell_line_name:
     #print(name)
     max_value = np.max(np.array(gene_expression.loc[name]))
