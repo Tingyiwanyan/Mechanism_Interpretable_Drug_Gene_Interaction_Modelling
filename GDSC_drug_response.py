@@ -179,7 +179,7 @@ GDSC_validate_drugs_remove = [i for i in GDSC_validate_drugs if not i in GDSC_re
 
 lll = pd.read_csv('GDSC2_AUC_smile.csv')
 lll.set_index('DRUG_NAME',inplace=True)
-lll.loc[GDSC_validate_drugs_remove]
+lll = lll.loc[GDSC_validate_drugs_remove]
 
 lll.reset_index(inplace=True)
 
@@ -220,4 +220,10 @@ cell_line_remove = ['BDCM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'BL70_HAEMATOPOIE
  'WM2664_SKIN', 'WM88_SKIN', 'WM983B_SKIN', 'YKG1_CENTRAL_NERVOUS_SYSTEM', 'ZR751_BREAST']
 
 cell_line_name_avail_ = [i for i in cell_line_name_avail if not i in cell_line_remove]
+merge_gdsc_id.set_index('CCLE_Name',inplace=True)
+
+#test_cell_line_name = cell_line_name_avail_[0:30]
+#test_drug_name = GDSC_validate_drugs_remove[0:]
+
+
 
