@@ -222,7 +222,7 @@ cell_line_remove = ['BDCM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'BL70_HAEMATOPOIE
 cell_line_name_avail_ = [i for i in cell_line_name_avail if not i in cell_line_remove]
 merge_gdsc_id.set_index('CCLE_Name',inplace=True)
 
-test_cell_line_name = cell_line_name_avail_[0:100]
+test_cell_line_name = cell_line_name_avail_[0:200]
 
 merge_gdsc_id = merge_gdsc_id.loc[test_cell_line_name]
 
