@@ -346,7 +346,24 @@ mask_val = tf.where(mask_val,1,0)
 mask_val = tf.reshape(mask_val, shape=(batch_shape_val,100))
 mask_val = tf.expand_dims(mask_val, axis=-1)
 
+k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
+model_midi = k.model_construction_midi(if_mutation=True)
+model_midi.load_weights('Pre_train_model/midi_55_epochs_prior_3000_pairs_with_drug_regularizer_softmax_temperature_9_training.h5')
+model_midi.summary()
+
+prediction_val_1 = model_midi((drug_atom_one_hot_chunk_val[0:400], gene_expression_chunk_val[0:400], 
+                                         drug_smile_length_chunk_val[0:400], drug_rel_position_chunk_val[0:400], 
+                                         edge_type_matrix_chunk_val[0:400], gene_mutation_bin_chunk_val[0:400],mask_val[0:400]))[0][:,0]
+
+prediction_val_2 = model_midi((drug_atom_one_hot_chunk_val[400:800], gene_expression_chunk_val[400:800], 
+                                         drug_smile_length_chunk_val[400:800], drug_rel_position_chunk_val[400:800], 
+                                         edge_type_matrix_chunk_val[400:800], gene_mutation_bin_chunk_val[400:800],mask_val[400:800]))[0][:,0]
+
+prediction_val_3 = model_midi((drug_atom_one_hot_chunk_val[800:], gene_expression_chunk_val[800:], 
+                                         drug_smile_length_chunk_val[800:], drug_rel_position_chunk_val[800:], 
+                                         edge_type_matrix_chunk_val[800:], gene_mutation_bin_chunk_val[800:],mask_val[800:]))[0][:,0]
 
 
+prediction_val = np.concatenate([prediction_val_1,prediction_val_2,prediction_val_3])
 
 
