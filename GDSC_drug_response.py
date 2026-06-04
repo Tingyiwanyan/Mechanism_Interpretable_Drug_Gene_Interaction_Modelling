@@ -257,6 +257,9 @@ for i in test_cell_line_name:
     index+=1
 
 
+string_lookup = tf.keras.layers.StringLookup(vocabulary=vocabulary_drug)
+layer_one_hot = tf.keras.layers.CategoryEncoding(num_tokens=8, output_mode="one_hot")
+
 smile_length = 100
 rel_distance_batch_val = [generate_rel_dist_matrix(x) for x in input_smile_seq_val]
 drug_rel_position_chunk_val = []
