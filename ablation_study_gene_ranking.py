@@ -209,7 +209,7 @@ TTD_validate_drugs = list(np.unique(TTD_validate_drugs))
 
 #df_TTD_drug_smile = pd.read_csv('df_TTD_drug_smile.csv')
 
-df_valid_drug_smile_TTD.read_csv('valid_drug_smile_TTD.csv')
+df_valid_drug_smile_TTD = pd.read_csv('valid_drug_smile_TTD.csv')
 
 TTD_validate_drugs = list(np.unique(list(df_valid_drug_smile_TTD['Drug_name_TTD'])))
 
