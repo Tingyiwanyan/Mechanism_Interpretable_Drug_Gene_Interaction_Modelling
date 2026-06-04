@@ -219,5 +219,5 @@ cell_line_remove = ['BDCM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'BL70_HAEMATOPOIE
  'TOLEDO_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'U937_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'VMRCRCW_KIDNEY', 'WM1799_SKIN', 
  'WM2664_SKIN', 'WM88_SKIN', 'WM983B_SKIN', 'YKG1_CENTRAL_NERVOUS_SYSTEM', 'ZR751_BREAST']
 
-cell_line_name_avail_ = [for i in cell_line_name_avail if not i in cell_line_remove]
+cell_line_name_avail_ = [i for i in cell_line_name_avail if not i in cell_line_remove]
 
