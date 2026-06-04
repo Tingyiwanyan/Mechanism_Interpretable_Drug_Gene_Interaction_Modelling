@@ -283,6 +283,48 @@ feature_select_score_gene = feature_select_score_model_gene.predict((drug_atom_o
                                                                     edge_type_matrix_chunk, gene_mutation_bin_chunk, mask))[1][:,0,:]
 
 
+"""
+Statistically calculate targeted gene vs non-targeted genes
+"""
+TTD_gene_ranking_list = []
+TTD_gene_ranking_list_non_target = []
+TTD_drug_gene_index = []
+
+index__ = 0
+for i in range(len(batch_drug_names)):
+    print(batch_drug_names[i])
+    drug_ttd_index = i
+    drug_name_plot = batch_drug_names[drug_ttd_index]
+    check_genes = list([df_valid_drug_smile_TTD.loc[drug_name_plot]['Target_Gene_Name']])
+    try:
+        np.array(check_genes[0]).shape[0] 
+        check_genes = list(df_valid_drug_smile_TTD.loc[drug_name_plot]['Target_Gene_Name'])
+    except:
+        check_genes = list([df_valid_drug_smile_TTD.loc[drug_name_plot]['Target_Gene_Name']])
+            
+    top_genes_score, top_genes_index = tf.math.top_k(feature_select_score_gene[drug_ttd_index], k=6144)
+    top_gene_names = np.array([gene_name_avail_geneformer[j] for j in top_genes_index])
+    for ii in check_genes:
+        try:
+            y_index = np.where(top_gene_names==ii)[0][0]
+        except:
+            continue
+        #if y_index > 1000:
+            #continue
+        print(y_index)
+        TTD_gene_ranking_list.append(y_index)
+        TTD_drug_gene_index.append(index__)
+    index__ += 1
+    non_target_gene = [kk for kk in whole_targeted_gene_names if not kk in check_genes]
+    for j in non_target_gene:
+        try:
+            y_index = np.where(top_gene_names == j)[0][0]
+        except:
+            continue
+        TTD_gene_ranking_list_non_target.append(y_index)
+        
+
+
 
 
 
