@@ -157,16 +157,16 @@ for i in pathway_names:
     pathway_gene_set = list(pathway_gene.loc[i][1])
     gene_set[i] = pathway_gene_set
 
-#with open('gene_embedding_important.npy', 'rb') as f:
-    #gene_embeddings = np.load(f)
+with open('gene_embedding_important.npy', 'rb') as f:
+    gene_embeddings = np.load(f)
 
 gene_name_avail_geneformer = list(np.load('gene_names.npy'))
 
-df_gene_embedding_one_hot = pd.DataFrame({'numbers': range(6144)})
-encoder_gene_embedding = BinaryEncoder(cols=['numbers'])
-df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embedding_one_hot)
+#df_gene_embedding_one_hot = pd.DataFrame({'numbers': range(6144)})
+#encoder_gene_embedding = BinaryEncoder(cols=['numbers'])
+#df_binary_gene_embedding = encoder_gene_embedding.fit_transform(df_gene_embedding_one_hot)
 
-gene_embeddings = np.array(df_binary_gene_embedding)
+#gene_embeddings = np.array(df_binary_gene_embedding)
 
 class drug_transformer_():
     """
@@ -831,7 +831,7 @@ k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_em
 model_midi = k.model_construction_midi(if_mutation=True)
 model_midi.summary()
 
-model_midi.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
+model_midi.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_self_supervised.weights.h5')
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 
@@ -893,11 +893,11 @@ for epoch in range(10):
             loss_drug = tf.reduce_mean(tf.math.log(tf.math.divide(X_global_score_nominator,X_global_score_denominator)),axis=-1)
     
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.6*loss_drug-0.2*loss_gene_set-0.4*loss_gene_embedding
-            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
+            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-0.2*loss_drug
             #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])
             #loss_total = loss_total/len(drug_name_batch)
-            #loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast
+            loss = tf.keras.losses.mean_squared_error(batch_drug_response, prediction[:,0])-loss_contrast
     
         gradients = tape.gradient(loss,model_midi.trainable_variables)
         #optimizer = tf.keras.optimizers.SGD(learning_rate=lr_schedule,momentum=0.9)
