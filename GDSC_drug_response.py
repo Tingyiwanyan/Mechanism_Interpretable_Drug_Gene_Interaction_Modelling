@@ -161,6 +161,7 @@ for i in pathway_names:
 with open('gene_embedding_important.npy', 'rb') as f:
     gene_embeddings = np.load(f)
 
+gene_name_avail_geneformer = list(np.load('gene_names.npy'))
 
 GDSC_validate_drugs = ['PF-562271','QUIZARTINIB','FORETINIB','DABRAFENIB','SELUMETINIB','MASITINIB','FR-180204',
                        'GEFITINIB','AXITINIB','PALBOCICLIB','AFATINIB','JW-7-24-1','OSIMERTINIB','DASATINIB','BOSUTINIB',
