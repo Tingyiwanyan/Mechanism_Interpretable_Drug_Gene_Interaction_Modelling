@@ -831,7 +831,7 @@ k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_em
 model_midi = k.model_construction_midi(if_mutation=True)
 model_midi.summary()
 
-
+model_midi.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 
