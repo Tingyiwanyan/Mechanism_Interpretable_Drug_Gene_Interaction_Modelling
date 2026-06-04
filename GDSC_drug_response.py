@@ -257,6 +257,70 @@ for i in test_cell_line_name:
     index+=1
 
 
+smile_length = 100
+rel_distance_batch_val = [generate_rel_dist_matrix(x) for x in input_smile_seq_val]
+drug_rel_position_chunk_val = []
+drug_smile_length_chunk_val = []
+drug_atom_one_hot_chunk_val = []
+gene_mutation_chunk_val = []
+gene_prior_chunk_val = []
+edge_type_matrix_chunk_val = []
+gene_expression_chunk_val = []
+for rel_distance_ in rel_distance_batch_val:
+    shape = rel_distance_.shape[0]
+    drug_rel_position = tf.cast(tf.gather(P[0], tf.cast(rel_distance_,tf.int32), axis=0), tf.float32)
+    concat_left = tf.cast(tf.zeros((smile_length-shape,shape,60)), tf.float32)
+    concat_right = tf.cast(tf.zeros((smile_length,smile_length-shape,60)), tf.float32)
+    drug_rel_position = tf.concat((drug_rel_position,concat_left),axis=0)
+    drug_rel_position = tf.concat((drug_rel_position,concat_right),axis=1)
+    drug_rel_position_chunk_val.append(drug_rel_position)
+drug_rel_position_chunk_val = tf.stack(drug_rel_position_chunk_val)
+
+for interpret_smile in input_interpret_smile_val:
+    input_drug_atom_names = tf.constant(list(interpret_smile))
+    input_drug_atom_index = string_lookup(input_drug_atom_names)-1
+    input_drug_atom_one_hot = layer_one_hot(input_drug_atom_index)
+    shape_drug_miss = input_drug_atom_one_hot.shape[0]
+    concat_right = tf.zeros((smile_length-shape_drug_miss,8))
+    input_drug_atom_one_hot = tf.concat((input_drug_atom_one_hot,concat_right),axis=0)
+    drug_smile_length_chunk_val.append(shape_drug_miss)
+    drug_atom_one_hot_chunk_val.append(input_drug_atom_one_hot)
+drug_smile_length_chunk_val = np.array(drug_smile_length_chunk_val)
+drug_atom_one_hot_chunk_val = tf.stack(drug_atom_one_hot_chunk_val)
+
+for smile_seq in input_smile_seq_val:
+    edge_type_matrix = get_drug_edge_type(smile_seq)
+    shape = edge_type_matrix.shape[0]
+    edge_type_matrix = tf.gather(edge_type_dict,tf.cast(edge_type_matrix,tf.int16),axis=0)
+    #drug_rel_position = tf.cast(tf.gather(P[0], tf.cast(rel_distance_,tf.int32), axis=0), tf.float32)
+    concat_left = tf.zeros((smile_length-shape,shape,5))
+    concat_right = tf.zeros((smile_length,smile_length-shape,5))
+    edge_type_matrix = tf.concat((edge_type_matrix,concat_left),axis=0)
+    edge_type_matrix = tf.concat((edge_type_matrix,concat_right),axis=1)
+    edge_type_matrix_chunk_val.append(edge_type_matrix)
+edge_type_matrix_chunk_val = tf.stack(edge_type_matrix_chunk_val)
+
+for cell_line_ in input_cell_line_name_val:
+    gene_expression_singlecelline = continuous_gene_df_filter.loc[cell_line_]
+    gene_expression_chunk_val.append(gene_expression_singlecelline)
+    gene_mutation_singlecelline = mutation_whole.loc[cell_line_]
+    gene_mutation_chunk_val.append(gene_mutation_singlecelline)
+
+gene_prior_chunk_val = tf.stack(input_gene_prior_val)
+gene_expression_chunk_val = tf.stack(gene_expression_chunk_val)
+gene_expression_bin_chunk_val = tf.gather(gene_expression_bin_dict,tf.cast(gene_expression_chunk_val,tf.int16),axis=0)
+gene_mutation_chunk_val = tf.stack(gene_mutation_chunk_val)
+gene_mutation_bin_chunk_val = tf.gather(gene_mutation_dict,tf.cast(gene_mutation_chunk_val,tf.int16),axis=0)
+
+batch_shape_val = gene_prior_chunk_val.shape[0]
+mask_val = tf.range(start=0, limit=100, dtype=tf.float32)
+mask_val = tf.broadcast_to(tf.expand_dims(mask_val,axis=0),shape=[batch_shape_val,100])
+mask_val = tf.reshape(mask_val, shape=(batch_shape_val*100))
+mask_val = mask_val < tf.cast(tf.repeat(drug_smile_length_chunk_val,repeats=100),tf.float32)
+mask_val = tf.where(mask_val,1,0)
+mask_val = tf.reshape(mask_val, shape=(batch_shape_val,100))
+mask_val = tf.expand_dims(mask_val, axis=-1)
+
 
 
 
