@@ -170,3 +170,10 @@ GDSC_validate_drugs = ['PF-562271','QUIZARTINIB','FORETINIB','DABRAFENIB','SELUM
                        'SN-38','GSK690693','RUXOLITINIB','ALECTINIB','PELITINIB','AZ960','AST-1306','SERDEMETAN','PHA-665752','sulfatinib',
                       'NINTEDANIB','AZD4547']
 
+GDSC_remove = ['PF-562271', 'QUIZARTINIB', 'SELUMETINIB', 'MASITINIB', 'FR-180204', 'JW-7-24-1', 
+                'BOSUTINIB', 'PONATINIB', 'CCT007093', 'QL-XI-92', 'LESTAURTINIB', 'IPA-3', 'PFI-1', 'PAZOPANIB', 
+                'QL-X-138', 'OSI-930', 'VISMODEGIB', 'AMUVATINIB', 'GW-2580', 'LFM-A13', 'CP466722', 'SN-38', 'GSK690693', 
+                'ALECTINIB', 'PELITINIB', 'AST-1306', 'SERDEMETAN', 'PHA-665752', 'sulfatinib', 'NINTEDANIB']
+
+GDSC_validate_drugs_remove = [i for i in GDSC_validate_drugs if not i in GDSC_remove]
+
