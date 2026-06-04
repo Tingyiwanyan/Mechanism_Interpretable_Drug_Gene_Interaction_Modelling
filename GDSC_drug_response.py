@@ -241,16 +241,19 @@ for i in test_cell_line_name:
     index = 0
     print(i)
     for j in GDSC_validate_drugs_remove:
-        drug_smile_single = merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['canonical_smile'][0]
-        #drug_smile_single = CCLE_drug_smiles[index]
-        rel_distance_ = generate_rel_dist_matrix(drug_smile_single)
-        interpret_smile = generate_interpret_smile(drug_smile_single)[0]
-        input_interpret_smile_val.append(interpret_smile)
-        input_drug_name_val.append(j)
-        #input_rel_distance.append(rel_distance_)
-        input_smile_seq_val.append(drug_smile_single)
-        input_drug_response_val.append(merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['AUC_PUBLISHED'][0])
-        input_cell_line_name_val.append(i)
+        try:
+            drug_smile_single = merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['canonical_smile'][0]
+            #drug_smile_single = CCLE_drug_smiles[index]
+            rel_distance_ = generate_rel_dist_matrix(drug_smile_single)
+            interpret_smile = generate_interpret_smile(drug_smile_single)[0]
+            input_interpret_smile_val.append(interpret_smile)
+            input_drug_name_val.append(j)
+            #input_rel_distance.append(rel_distance_)
+            input_smile_seq_val.append(drug_smile_single)
+            input_drug_response_val.append(merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['AUC_PUBLISHED'][0])
+            input_cell_line_name_val.append(i)
+        except:
+            continue
     index+=1
 
 
