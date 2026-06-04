@@ -332,13 +332,12 @@ for cell_line_ in input_cell_line_name_val:
     gene_mutation_singlecelline = mutation_whole.loc[cell_line_]
     gene_mutation_chunk_val.append(gene_mutation_singlecelline)
 
-gene_prior_chunk_val = tf.stack(input_gene_prior_val)
 gene_expression_chunk_val = tf.stack(gene_expression_chunk_val)
 gene_expression_bin_chunk_val = tf.gather(gene_expression_bin_dict,tf.cast(gene_expression_chunk_val,tf.int16),axis=0)
 gene_mutation_chunk_val = tf.stack(gene_mutation_chunk_val)
 gene_mutation_bin_chunk_val = tf.gather(gene_mutation_dict,tf.cast(gene_mutation_chunk_val,tf.int16),axis=0)
 
-batch_shape_val = gene_prior_chunk_val.shape[0]
+batch_shape_val = gene_expression_chunk_val.shape[0]
 mask_val = tf.range(start=0, limit=100, dtype=tf.float32)
 mask_val = tf.broadcast_to(tf.expand_dims(mask_val,axis=0),shape=[batch_shape_val,100])
 mask_val = tf.reshape(mask_val, shape=(batch_shape_val*100))
