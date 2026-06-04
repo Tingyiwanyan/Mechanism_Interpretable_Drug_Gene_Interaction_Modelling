@@ -222,8 +222,39 @@ cell_line_remove = ['BDCM_HAEMATOPOIETIC_AND_LYMPHOID_TISSUE', 'BL70_HAEMATOPOIE
 cell_line_name_avail_ = [i for i in cell_line_name_avail if not i in cell_line_remove]
 merge_gdsc_id.set_index('CCLE_Name',inplace=True)
 
-#test_cell_line_name = cell_line_name_avail_[0:30]
-#test_drug_name = GDSC_validate_drugs_remove[0:]
+test_cell_line_name = cell_line_name_avail_[0:100]
+
+merge_gdsc_id = merge_gdsc_id.loc[test_cell_line_name]
+
+
+
+input_gene_exp_one_hot_val = []
+input_drug_one_hot_val = []
+input_drug_response_val = []
+input_rel_distance_val = []
+input_smile_seq_val = []
+input_gene_prior_val = []
+input_cell_line_name_val = []
+input_drug_name_val = []
+input_interpret_smile_val = []
+for i in test_cell_line_name:
+    index = 0
+    print(i)
+    for j in GDSC_validate_drugs_remove:
+        drug_smile_single = merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['canonical_smile'][0]
+        #drug_smile_single = CCLE_drug_smiles[index]
+        rel_distance_ = generate_rel_dist_matrix(drug_smile_single)
+        interpret_smile = generate_interpret_smile(drug_smile_single)[0]
+        input_interpret_smile_val.append(interpret_smile)
+        input_drug_name_val.append(j)
+        #input_rel_distance.append(rel_distance_)
+        input_smile_seq_val.append(drug_smile_single)
+        input_drug_response_val.append(merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['AUC_PUBLISHED'][0])
+        input_cell_line_name_val.append(i)
+    index+=1
+
+
+
 
 
 
