@@ -207,21 +207,26 @@ TTD_validate_drugs = ['Intedanib','Ruxolitinib','Baricitinib','Estrone','Ospemif
 TTD_validate_drugs = list(np.unique(TTD_validate_drugs))
 
 
-df_TTD_drug_smile = pd.read_csv('df_TTD_drug_smile.csv')
+#df_TTD_drug_smile = pd.read_csv('df_TTD_drug_smile.csv')
 
-drug_smile_list_GDSC = []
-drug_name_list_GDSC = []
-drug_smile_list_TTD = []
-drug_name_list_TTD = []
+df_valid_drug_smile_TTD.read_csv('valid_drug_smile_TTD.csv')
 
-for i in GDSC_validate_drugs:
+TTD_validate_drugs = list(np.unique(list(df_valid_drug_smile_TTD['Drug_name_TTD'])))
+
+df_valid_drug_smile_TTD.set_index("Drug_name_TTD",inplace=True)
+
+
+TTD_validate_smiles = []
+for i in TTD_validate_drugs:
     try:
-        drug_smile_seq = pcp.get_compounds(i, 'name')[0].canonical_smiles
-        drug_smile_list_GDSC.append(drug_smile_seq)
-        drug_name_list_GDSC.append(i)
-        print(i)
+        np.array(df_valid_drug_smile_TTD.loc[i]['Drug_smile_TTD']).shape[0] 
+        smile_ = df_valid_drug_smile_TTD.loc[i]['Drug_smile_TTD'][0]
+        TTD_validate_smiles.append(smile_)
     except:
-        continue
+        smile_ = df_valid_drug_smile_TTD.loc[i]['Drug_smile_TTD']
+        print(i)
+        print(smile_)
+        TTD_validate_smiles.append(smile_)
 
 
 #k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_embedding)
@@ -240,11 +245,7 @@ mutation_gene.rename(columns = {mutation_gene.columns[0]:'cell_line_name'}, inpl
 mutation_gene.set_index('cell_line_name', inplace=True)
 mutation_gene
 
-df_TTD_drug_smile.set_index('Drug_name_TTD',inplace=True)
 
-TTD_validate_smiles = df_TTD_drug_smile.loc[TTD_validate_drugs]['Drug_smile_TTD']
-
-whole_targeted_gene_names = list(merged_df_TTD.loc[TTD_validate_drugs]['Target_Gene_Name'])
 
 from utils.utils import *
 from utils.smile_rel_dist_interpreter import *
@@ -268,7 +269,6 @@ mask = mask < tf.cast(tf.repeat(drug_smile_length_chunk,repeats=100),tf.float32)
 mask = tf.where(mask,1,0)
 mask = tf.reshape(mask, shape=(batch_shape,100))
 mask = tf.expand_dims(mask, axis=-1)
-
 
 
 
