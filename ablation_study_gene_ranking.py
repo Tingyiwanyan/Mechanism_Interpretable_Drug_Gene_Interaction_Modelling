@@ -283,6 +283,8 @@ feature_select_score_gene = feature_select_score_model_gene.predict((drug_atom_o
                                                                     edge_type_matrix_chunk, gene_mutation_bin_chunk, mask))[1][:,0,:]
 
 
+whole_targeted_gene_names = list(df_valid_drug_smile_TTD.loc[TTD_validate_drugs]['Target_Gene_Name'])
+
 """
 Statistically calculate targeted gene vs non-targeted genes
 """
@@ -322,7 +324,7 @@ for i in range(len(batch_drug_names)):
         except:
             continue
         TTD_gene_ranking_list_non_target.append(y_index)
-        
+
 
 
 
