@@ -265,19 +265,8 @@ for name in test_cell_line_name:
     #print(name)
     max_value = np.max(np.array(gene_expression.loc[name]))
     #min_value = np.min(np.array(gene_expression.loc[name]))
-    continuous_gene = normalize_min_max(gene_expression_whole_avail.loc[name])
+    continuous_gene = normalize_min_max(gene_expression.loc[name])
     continuous_gene_total.append(continuous_gene)
-    bin_value = max_value/5
-    #bin_value = max_value/4
-    #Dis = tf.keras.layers.Discretization(bin_boundaries=[0, bin_value,2*bin_value, 3*bin_value ],epsilon=0.001)
-    Dis = tf.keras.layers.Discretization(bin_boundaries=[bin_value,2*bin_value,3*bin_value],epsilon=0.001)
-    #Dis.adapt(np.array(gene_expression_whole_avail))
-    disc_gene_ = Dis(np.array(gene_expression_whole_avail.loc[name]))
-    disc_gene_total.append(disc_gene_)
-disc_gene_total = tf.stack(disc_gene_total)
-disc_gene_df = pd.DataFrame(disc_gene_total, index=cell_line_name_avail)
-disc_gene_df.columns = list(gene_expression.columns)
-disc_gene_df_filter = disc_gene_df[gene_name_avail_geneformer]
 
 continuous_gene_total = tf.stack(continuous_gene_total)
 continuous_gene_df = pd.DataFrame(continuous_gene_total, index=cell_line_name_avail)
