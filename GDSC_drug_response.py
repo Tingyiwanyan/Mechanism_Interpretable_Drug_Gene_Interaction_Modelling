@@ -270,7 +270,7 @@ for name in test_cell_line_name:
     continuous_gene_total.append(continuous_gene)
 
 continuous_gene_total = tf.stack(continuous_gene_total)
-continuous_gene_df = pd.DataFrame(continuous_gene_total, index=cell_line_name_avail)
+continuous_gene_df = pd.DataFrame(continuous_gene_total, index=test_cell_line_name)
 continuous_gene_df.columns = list(gene_expression.columns)
 continuous_gene_df_filter = continuous_gene_df[gene_name_avail_geneformer]
 
