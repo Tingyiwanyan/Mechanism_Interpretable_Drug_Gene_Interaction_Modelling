@@ -714,8 +714,8 @@ k = drug_transformer_(gene_embeddings)#, relative_pos_enc_lookup=relative_pos_em
 
 midi_model_binary_gene_embedding = k.model_construction_midi(if_mutation=True)
 #midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_binary_gene_embedding.weights.h5')
-model_midi.load_weights('Pre_train_model/midi_55_epochs_prior_3000_pairs_with_drug_regularizer_softmax_temperature_9_training.h5')
-model_midi.summary()
+midi_model_binary_gene_embedding.load_weights('Pre_train_model/midi_55_epochs_prior_3000_pairs_with_drug_regularizer_softmax_temperature_9_training.h5')
+midi_model_binary_gene_embedding.summary()
 
 
 #midi_simple_concat.summary()
