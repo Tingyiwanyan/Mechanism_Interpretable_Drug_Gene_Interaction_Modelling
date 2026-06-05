@@ -178,7 +178,7 @@ GDSC_remove = ['PF-562271', 'QUIZARTINIB', 'SELUMETINIB', 'MASITINIB', 'FR-18020
 
 GDSC_validate_drugs_remove = [i for i in GDSC_validate_drugs if not i in GDSC_remove]
 
-lll = pd.read_csv('GDSC2_AUC_smile.csv')
+lll = pd.read_csv('GDSC2_IC50_smile.csv')
 lll.set_index('DRUG_NAME',inplace=True)
 lll = lll.loc[GDSC_validate_drugs_remove]
 
@@ -251,7 +251,7 @@ for i in test_cell_line_name:
             input_drug_name_val.append(j)
             #input_rel_distance.append(rel_distance_)
             input_smile_seq_val.append(drug_smile_single)
-            input_drug_response_val.append(merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['AUC_PUBLISHED'][0])
+            input_drug_response_val.append(merge_gdsc_id.loc[i][merge_gdsc_id.loc[i]['DRUG_NAME']==j]['IC50_PUBLISHED'][0])
             input_cell_line_name_val.append(i)
         except:
             continue
