@@ -172,7 +172,7 @@ gene_name_avail_geneformer = list(np.load('gene_names.npy'))
 
 k = drug_transformer_(gene_embeddings)
 midi_model_binary_gene_embedding = k.model_construction_midi(if_mutation=True)
-midi_model_binary_gene_embedding.load_weights('/project/DPDS/Xiao_lab/shared/tingyi/drug_sensitivity_prediction/Drug_response/BIB_revision/midi_no_supervise_contrast.weights.h5')
+midi_model_binary_gene_embedding.load_weights('Pre_train_model/midi_55_epochs_prior_3000_pairs_with_drug_regularizer_softmax_temperature_9_training.h5')
 
 
 
@@ -312,8 +312,8 @@ for i in range(len(batch_drug_names)):
             y_index = np.where(top_gene_names==ii)[0][0]
         except:
             continue
-        i#f y_index > 5500:
-            #continue
+        if y_index > 1500:
+            continue
         print(y_index)
         TTD_gene_ranking_list.append(y_index)
         TTD_drug_gene_index.append(index__)
